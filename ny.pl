@@ -2,14 +2,6 @@ verify(InputFileName)   :-  readProof(InputFileName, Prems, Goal, Proof),
                             checkEndLineNumber(Proof, Last), !,
                             valid_proof(Prems, Goal, Last, Proof, []), !.
 
-% Vanlig rad
-checkPremises([[_,_,F]|T], LastWasPremise)              :-(F == premise, LastWasPremise, !, checkPremises(T, true));
-                                                            (F \== premise, !, checkPremises(T, false)).
-% Box
-checkPremises([[[_,_,assumption]|BT]|T], _)             :-	checkPremises(BT, false),
-                                                            checkPremises(T, false).
-checkPremises([],_).
-
 checkEndLineNumber([_|T], Last)                         :-  checkEndLineNumber(T, Last).
 checkEndLineNumber([[Last,_,_]|[]], Last).
 
