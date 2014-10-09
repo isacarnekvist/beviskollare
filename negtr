@@ -39,7 +39,7 @@ imp(and(n, neg(t)), p).
         ],
         [23, neg(or(s,c)),              negint(14,22)],  
         [24, and(h,neg(or(s,c))),       andint(6, 23)],
-        [25, p,                         impel(3,24)]
+        [25, p,                         impel(24,3)]
     ], 
     [26, imp(and(n, neg(t)), p),        impint(4,25)]  
 ].
