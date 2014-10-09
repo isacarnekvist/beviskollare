@@ -1,9 +1,12 @@
+% Checks if the proof in the given file is correct
 verify(InputFileName)   :-  readProof(InputFileName, Prems, Goal, Proof),
                             checkEndLineNumber(Proof, Last), !,
                             valid_proof(Prems, Goal, Last, Proof, []), !.
 
+% At what line is the proof ending
 checkEndLineNumber([_|T], Last)                         :-  checkEndLineNumber(T, Last).
 checkEndLineNumber([[Last,_,_]|[]], Last).
+
 
 % Last line!
 valid_proof(Prems, G1, Stop, [[Stop,G2,F]|_], Proved)  :-  !, checkLine(Prems, [Stop,G2,F], Proved),
@@ -15,9 +18,10 @@ valid_proof(Prems, G, Stop, [[[L,D,assumption]|BT]|T], Proved)   :-  valid_proof
 valid_proof(Prems, G, Stop, [[L,D,R]|T], Proved)        :-  !, checkLine(Prems, [L, D, R], Proved), !, % Regeln behövs inte i Proved
                                                             valid_proof(Prems, G, Stop, T, [[L,D]|Proved]).
 
-% Empty proof
+% Empty proof, used if there is a box with only an assumption
 valid_proof(_,_,_,[],_).
 
+% The following lines match with the given rules
 checkLine(Prems, [_, D, premise], _)                    :-  member(D, Prems), !.
 checkLine(_, [_, B, impel(X,Y)], Proved)                :-  member([Y, imp(A,B)], Proved), member([X, A], Proved), !.
 checkLine(_, [_, neg(A), mt(X,Y)], Proved)              :-  member([X, imp(A,B)], Proved), member([Y, neg(B)], Proved), !.
@@ -47,15 +51,16 @@ checkLine(Prems, [_, neg(A), negint(X,Y)], Proved)      :-  getBox(X,Box,Proved,
 checkLine(Prems, [_, A, pbc(X,Y)], Proved)              :-  getBox(X,Box,Proved, Prev2),
                                                             [[X,neg(A)]|T] = Box,
                                                             valid_proof(Prems, cont, Y, T, [[X,neg(A)]|Prev2]).
-
 checkLine(_, [_, neg(neg(A)), negnegint(X)], Proved)    :-  member([X, A], Proved).
 checkLine(_, [_, neg(A), mt(X,Y)], Proved)              :-  member([X, imp(A,B)], Proved), member([Y, neg(B)], Proved).
 checkLine(_, [_, or(A,neg(A)), lem], _).
 checkLine(_, [_, or(neg(A),A), lem], _).
 
+% Collects a previous box and the lines already proved previous to that box
 getBox(AtLine, [[AtLine,D]|T], [[[AtLine,D]|T]|TP], TP).
 getBox(AtLine, Box, [_|TP], Prev)                       :- getBox(AtLine, Box, TP, Prev).       
 
+% Read from file
 readProof(InputFileName, Prems, Goal, Proof)            :-  see(InputFileName),
                                                             read(Prems), read(Goal), read(Proof),
                                                             seen.
