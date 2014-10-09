@@ -22,15 +22,15 @@ checkLine(Prems, [_, D, premise], _)                    :-  member(D, Prems), !.
 checkLine(_, [_, B, impel(X,Y)], Proved)                :-  member([Y, imp(A,B)], Proved), member([X, A], Proved), !.
 checkLine(_, [_, neg(A), mt(X,Y)], Proved)              :-  member([X, imp(A,B)], Proved), member([Y, neg(B)], Proved), !.
 checkLine(_, [_, A, negnegel(X)], Proved)               :-  member([X, neg(neg(A))], Proved), !.
-checkLine(Prems, [_, imp(A,B), impint(X,Y)], Proved)    :-  getBox(X,Box,Proved),
+checkLine(Prems, [_, imp(A,B), impint(X,Y)], Proved)    :-  getBox(X,Box,Proved, Prev),
                                                             [[X,A]|T] = Box, 
-                                                            valid_proof(Prems, B, Y, T, [[X,A]|Proved]).
-checkLine(Prems, [_, B, orel(X,F1,T1,F2,T2)], Proved)   :-  getBox(F1,Box1,Proved), 
+                                                            valid_proof(Prems, B, Y, T, [[X,A]|Prev]).
+checkLine(Prems, [_, B, orel(X,F1,T1,F2,T2)], Proved)   :-  getBox(F1,Box1,Proved, Prev1), 
                                                             [[F1,A1]|BT1] = Box1,
-                                                            valid_proof(Prems, B, T1, BT1, [[F1,A1]|Proved]),
-                                                            getBox(F2,Box2,Proved), 
+                                                            valid_proof(Prems, B, T1, BT1, [[F1,A1]|Prev1]),
+                                                            getBox(F2,Box2,Proved, Prev2), 
                                                             [[F2,A2]|BT2] = Box2, 
-                                                            valid_proof(Prems, B, T2, BT2, [[F2,A2]|Proved]),
+                                                            valid_proof(Prems, B, T2, BT2, [[F2,A2]|Prev2]),
                                                             (member([X, or(A1, A2)], Proved); member([X, or(A2, A1)], Proved)).
 checkLine(_, [_, A, copy(X)], Proved)                   :-  member([X, A], Proved), !.
 checkLine(_, [_, and(A,B), andint(X,Y)], Proved)        :-  member([X, A], Proved),
@@ -41,18 +41,20 @@ checkLine(_, [_, or(A,_), orint1(X)], Proved)           :-  member([X, A], Prove
 checkLine(_, [_, or(_,B), orint2(X)], Proved)           :-  member([X, B], Proved).
 checkLine(_, [_, cont, negel(P,N)], Proved)             :-  member([P, R], Proved), member([N, neg(R)], Proved).  
 checkLine(_, [_, _, contel(X)], Proved)                 :-  member([X, cont], Proved).
-checkLine(Prems, [_, neg(A), negint(X,Y)], Proved)      :-  getBox(X,Box,Proved),
+checkLine(Prems, [_, neg(A), negint(X,Y)], Proved)      :-  getBox(X,Box,Proved,Prev1),
                                                             [[X,A]|T] = Box, 
-                                                            valid_proof(Prems, cont, Y, T, [[X,A]|Proved]).
-checkLine(Prems, [_, A, pbc(X,Y)], Proved)              :-  getBox(X,Box,Proved),
+                                                            valid_proof(Prems, cont, Y, T, [[X,A]|Prev1]).
+checkLine(Prems, [_, A, pbc(X,Y)], Proved)              :-  getBox(X,Box,Proved, Prev2),
                                                             [[X,neg(A)]|T] = Box,
-                                                            valid_proof(Prems, cont, Y, T, [[X,neg(A)]|Proved]).
+                                                            valid_proof(Prems, cont, Y, T, [[X,neg(A)]|Prev2]).
+
 checkLine(_, [_, neg(neg(A)), negnegint(X)], Proved)    :-  member([X, A], Proved).
 checkLine(_, [_, neg(A), mt(X,Y)], Proved)              :-  member([X, imp(A,B)], Proved), member([Y, neg(B)], Proved).
 checkLine(_, [_, or(A,neg(A)), lem], _).
 checkLine(_, [_, or(neg(A),A), lem], _).
 
-getBox(AtLine, Box, Proved)                             :-  member([[AtLine,D]|T], Proved), Box = [[AtLine,D]|T].
+getBox(AtLine, [[AtLine,D]|T], [[[AtLine,D]|T]|TP], TP).
+getBox(AtLine, Box, [_|TP], Prev)                       :- getBox(AtLine, Box, TP, Prev).       
 
 readProof(InputFileName, Prems, Goal, Proof)            :-  see(InputFileName),
                                                             read(Prems), read(Goal), read(Proof),
