@@ -53,7 +53,7 @@ checkLine(_, [_, or(A,neg(A)), lem], _).
 checkLine(_, [_, or(neg(A),A), lem], _).
 
 getBox(AtLine, [[AtLine,D]|T], [[[AtLine,D]|T]|TP], TP).
-getBox(AtLine, Box, [_|TP], Prev)                 :- getBox(AtLine, Box, TP, Prev).       
+getBox(AtLine, Box, [_|TP], Prev)                       :- getBox(AtLine, Box, TP, Prev).       
 
 readProof(InputFileName, Prems, Goal, Proof)            :-  see(InputFileName),
                                                             read(Prems), read(Goal), read(Proof),
