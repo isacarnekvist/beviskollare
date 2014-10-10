@@ -1,0 +1,45 @@
+% Premise
+[imp(and(c,n),t), and(h, neg(s)), imp(and(h,neg(or(s,c))),p)].
+
+% Mål
+imp(and(n, neg(t)), p).
+
+% Bevis
+[
+    [1, imp(and(c,n),t),                premise],
+    [2, and(h, neg(s)),                 premise],
+    [3, imp(and(h,neg(or(s,c))),p),     premise],
+    [
+        [4, and(n, neg(t)),             assumption],
+        [5, neg(s),                     andel2(2)],
+        [6, h,                          andel1(2)],
+        [7, neg(t),                     andel2(4)],
+        [8, neg(and(c,n)),              mt(1,7)],
+        [
+            [9, c,                      assumption],
+            [10, n,                     andel1(4)],
+            [11, and(c,n),              andint(9,10)],
+            [12, cont,                  negel(11,8)]
+        ],
+        [13, neg(c),                    negint(9,12)],
+        [
+            [14, or(s,c),               assumption],
+            [
+                [15, s,                 assumption],
+                [16, cont,              negel(15,5)],
+                [17, neg(or(s,c)),      contel(16)]
+            ],
+            [
+                [18, c,                 assumption],
+                [19, cont,              negel(18,13)]
+            ],
+            [20, neg(or(s,c)),          contel(19)],                % <- Ska ligga innanför boxen ovan
+            [21, neg(or(s,c)),          orel(14,15,17,18,20)],
+            [22, cont,                  negel(14,21)]
+        ],
+        [23, neg(or(s,c)),              negint(14,22)],  
+        [24, and(h,neg(or(s,c))),       andint(6, 23)],
+        [25, p,                         impel(24,3)]
+    ], 
+    [26, imp(and(n, neg(t)), p),        impint(4,25)]  
+].
