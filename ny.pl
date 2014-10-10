@@ -9,7 +9,7 @@ checkEndLineNumber([[Last,_,_]|[]], Last).
 
 
 % Last line!
-valid_proof(Prems, G1, Stop, [[Stop,G2,F]|_], Proved)  :-  !, checkLine(Prems, [Stop,G2,F], Proved),
+valid_proof(Prems, G1, Stop, [[Stop,G2,F]|_], Proved)   :-  !, checkLine(Prems, [Stop,G2,F], Proved),
                                                             G1 == G2.
 % Box, add to proven, prove when asked for
 valid_proof(Prems, G, Stop, [[[L,D,assumption]|BT]|T], Proved)   :-  valid_proof(Prems, G, Stop, T, [[[L,D]|BT]|Proved]).
@@ -58,7 +58,7 @@ checkLine(_, [_, or(neg(A),A), lem], _).
 
 % Collects a previous box and the lines already proved previous to that box
 getBox(AtLine, [[AtLine,D]|T], [[[AtLine,D]|T]|TP], TP).
-getBox(AtLine, Box, [_|TP], Prev)                       :- getBox(AtLine, Box, TP, Prev).       
+getBox(AtLine, Box, [_|TP], Prev)                       :-  getBox(AtLine, Box, TP, Prev).       
 
 % Read from file
 readProof(InputFileName, Prems, Goal, Proof)            :-  see(InputFileName),
