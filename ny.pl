@@ -9,7 +9,7 @@ checkEndLineNumber([[Last,_,_]|[]], Last).
 
 
 % Last line!
-valid_proof(Prems, G1, Stop, [[Stop,G2,F]|_], Proved)   :-  !, checkLine(Prems, [Stop,G2,F], Proved),
+valid_proof(Prems, G1, Stop, [[Stop,G2,F]|[]], Proved)   :-  !, checkLine(Prems, [Stop,G2,F], Proved),
                                                             G1 == G2.
 % Box, add to proven, prove when asked for
 valid_proof(Prems, G, Stop, [[[L,D,assumption]|BT]|T], Proved)   :-  valid_proof(Prems, G, Stop, T, [[[L,D]|BT]|Proved]).
